@@ -16,7 +16,6 @@ class Paddle: # Player
         self.paddle_velocity_y: int = 0
         self.paddle_height: int = 0
         self.paddle_width: int = 0
-        self.is_player_ai: bool = False
 
     def set_paddle_x(self, x: int):
         self.x = x
@@ -35,9 +34,6 @@ class Paddle: # Player
 
     def set_paddle_width(self, width: int):
         self.paddle_width = width
-
-    def set_is_player_ai(self, is_ai: bool):
-        self.is_player_ai = is_ai
 
     def move(self):
         pass

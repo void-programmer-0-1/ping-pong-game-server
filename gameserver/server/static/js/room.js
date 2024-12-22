@@ -71,6 +71,7 @@ async function JoinRoomHandler() {
 
         if (data["status_code"] == 200) {
             alert(data["message"]);
+            window.location.href = "/game";
         } else {
             alert(data["detail"]);
         }

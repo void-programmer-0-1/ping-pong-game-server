@@ -18,7 +18,7 @@ from models import (
 from room import Room
 
 rooms: list[Room] = []
-room_code_index: dict[str, int] = {}
+room_index: dict[str, int] = {}
 
 server = FastAPI()
 server.mount("/static", StaticFiles(directory="static"), name="static")
@@ -87,9 +87,9 @@ async def create_room_route(request: RoomCreationReq):
         player2_name = request.player2
         room = Room()
         room_code = room.create_room(player1_id=player1_name, player2_id=player2_name)
-        room_index = len(rooms)
-        rooms.append({"room_code": room_code, "room": room})
-        room_code_index.update({str(room_code) : room_index})
+        room_number = len(rooms)
+        rooms.append(room)
+        room_index.update({str(room_code) : room_number})
         return {"status_code": 200, "message": "room created successfully", "room_code": room_code}
 
     except ValidationError as validation_error:
@@ -110,8 +110,23 @@ async def join_room(request: JoinRoomReq):
     try:
         room_code = request.room_code
         is_player_1 = request.is_player_1
-        print(room_code, is_player_1)
+        room_number: int = room_index[room_code]
+        room = rooms[room_number]
+        player1 = room.players[0]
+        player2 = room.players[1]
+
+        if is_player_1:
+            # TODO assign paddle to the right
+            player1.is_player_active = True
+            print(player1.player_id)
+        else:
+            # TODO assign paddle to the right
+            player2.is_player_active = True
+            print(player2.player_id)
+
+        # TODO redirect the user to the /game page on the success response
         return {"status_code": 200, "message": "joined room"}
+    
     except ValidationError as validation_error:
         error_message = generate_exception_message(
             error_count=validation_error.error_count(),

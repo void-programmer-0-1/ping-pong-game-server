@@ -1,3 +1,4 @@
+import uuid
 from pydantic import BaseModel, field_validator
 
 class RoomCreationReq(BaseModel):
@@ -17,7 +18,19 @@ class RoomCreationReq(BaseModel):
         if name_len <= 6:
             raise ValueError("Name should contain more than 6 characters")
         return player2
-    
+
+
+class JoinRoomReq(BaseModel):
+    room_code: str
+    is_player_1: bool 
+
+    @field_validator("room_code")
+    def validate_room_code(cls, room_code: uuid.uuid4) -> uuid.uuid4:
+        try:
+            _ = uuid.UUID(room_code, version=4)
+        except Exception as err:
+            return ValueError("Invalid Room Code")
+        return room_code
 
 
 def generate_exception_message(error_count: int, error_list: list) -> str:

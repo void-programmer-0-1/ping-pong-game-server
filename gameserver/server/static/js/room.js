@@ -30,7 +30,7 @@ async function handleRoomCreation() {
         console.log(data)
 
         if (data["status_code"] == 200) {
-            localStorage.setItem("player1", player1);
+            localStorage.setItem("isRoomCreator", true);
             alert(data["message"]);
             alert(data["room_code"]);
 
@@ -45,9 +45,13 @@ async function handleRoomCreation() {
 
 
 async function JoinRoomHandler() {
-    room_code = document.getElementById("code").value;
-    player1 = localStorage.getItem('player1');
-    is_player_1 = player1 != null ? true : false;
+    roomCode = document.getElementById("code").value;
+    isRoomCreator = localStorage.getItem("isRoomCreator");
+    if(isRoomCreator == null){
+        isRoomCreator = false;
+    }
+
+    localStorage.setItem("roomCode", roomCode);
 
     try {
         const response = await fetch("http://127.0.0.1:8000/join-room", {
@@ -55,7 +59,7 @@ async function JoinRoomHandler() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ room_code, is_player_1 }),
+            body: JSON.stringify({ "room_code": roomCode, "is_room_creator": isRoomCreator }),
         });
         
         if (!response.ok) {

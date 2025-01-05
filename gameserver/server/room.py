@@ -6,7 +6,7 @@ class Room:
     def __init__(self):
         self.room_id: uuid.UUID = None
         self.players: list[Player] = []
-        self.ideal_time_minute = 1
+        self.ideal_time_in_minute = 1
 
     def create_room(self, player1_id: str, player2_id: str) -> uuid.uuid4:
        

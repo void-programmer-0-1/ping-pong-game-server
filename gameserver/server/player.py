@@ -18,7 +18,6 @@ class Player:
             self.player_paddle.set_paddle_x(15)
             self.player_paddle.set_paddle_y(canvas_config.screen_height / 2 - self.player_paddle.paddle_height / 2)
             self.player_paddle.set_paddle_velocity_x(5)
-            self.player_paddle.is_player_ai(False)
 
         else:
             ...
@@ -28,3 +27,9 @@ class Player:
 
     def score_up(self):
         pass
+
+
+
+
+
+    

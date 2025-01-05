@@ -1,4 +1,4 @@
-
 #!/bin/bash
-#!/usr/bin/python3.10
-/usr/bin/python3.10 -m gunicorn -c gunicorn.config.py server:server
+redis-server --daemonize yes
+gunicorn -c gunicorn.config.py server:server --bind 0.0.0.0:8000
+

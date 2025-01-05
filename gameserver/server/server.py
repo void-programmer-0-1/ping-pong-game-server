@@ -11,6 +11,7 @@ from pydantic import ValidationError
 from models import (
     RoomCreationReq, 
     JoinRoomReq,
+    GetRoomInfoReq,
     generate_exception_message
 )
 
@@ -104,19 +105,18 @@ async def create_room_route(request: RoomCreationReq):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-
 @server.post("/join-room")
 async def join_room(request: JoinRoomReq):
     try:
         room_code = request.room_code
-        is_player_1 = request.is_player_1
+        is_room_creator = request.is_room_creator
         room_number: int = room_index[room_code]
         room = rooms[room_number]
         player1 = room.players[0]
         player2 = room.players[1]
 
-        if is_player_1:
-            # TODO assign paddle to the right
+        if is_room_creator:
+            # TODO assign paddle to the left
             player1.is_player_active = True
             print(player1.player_id)
         else:
@@ -128,6 +128,7 @@ async def join_room(request: JoinRoomReq):
         return {"status_code": 200, "message": "joined room"}
     
     except ValidationError as validation_error:
+        print(validation_error)
         error_message = generate_exception_message(
             error_count=validation_error.error_count(),
             error_list=validation_error.errors()
@@ -138,3 +139,25 @@ async def join_room(request: JoinRoomReq):
         print(f"Error occured in join_room :: {error}")
         raise HTTPException(status_code=500, detail="Internal server error")
         
+
+@server.get("/get-room-info")
+def get_room_info(request: GetRoomInfoReq):
+    try:
+        room_code = request.room_code
+        room_number: int = room_index[room_code]
+        room = rooms[room_number]
+        player1 = room.players[0].player_id
+        player2 = room.players[1].player_id
+        return {"status_code": 200, "player1": player1, "player2": player2}
+
+    except ValidationError as validation_error:
+        print(validation_error)
+        error_message = generate_exception_message(
+            error_count=validation_error.error_count(),
+            error_list=validation_error.errors()
+        )
+        return HTTPException(status_code=422, detail=error_message)
+
+    except Exception as error:
+        print(f"Error occured in get_room_info :: {error}")
+        raise HTTPException(status_code=500, detail="Internal server error")

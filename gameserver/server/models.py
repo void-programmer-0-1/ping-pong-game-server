@@ -22,7 +22,19 @@ class RoomCreationReq(BaseModel):
 
 class JoinRoomReq(BaseModel):
     room_code: str
-    is_player_1: bool 
+    is_room_creator: bool 
+
+    @field_validator("room_code")
+    def validate_room_code(cls, room_code: uuid.uuid4) -> uuid.uuid4:
+        try:
+            _ = uuid.UUID(room_code, version=4)
+        except Exception as err:
+            return ValueError("Invalid Room Code")
+        return room_code
+
+
+class GetRoomInfoReq(BaseModel):
+    room_code: str
 
     @field_validator("room_code")
     def validate_room_code(cls, room_code: uuid.uuid4) -> uuid.uuid4:
@@ -39,3 +51,4 @@ def generate_exception_message(error_count: int, error_list: list) -> str:
         error_string += error_list[i]["msg"]
         error_string += "\n" if i + 1 != error_count else ""
     return error_string
+
